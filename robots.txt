@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://veh4ses.github.io/site/sitemap.xml
