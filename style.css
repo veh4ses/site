@@ -1809,3 +1809,279 @@ h6,
 .fitness-preview-title {
   font-family: var(--font-heading);
 }
+
+/* =========================================
+   VEH4SES® — CONTACT FORM UPDATE
+   Dark / Red / Responsive
+   Adaugă acest bloc la finalul style.css
+========================================= */
+
+.quote-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(20px, 4vw, 34px);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.045),
+    rgba(255, 255, 255, 0.015)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.quote-form * {
+  box-sizing: border-box;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+}
+
+.form-field label {
+  color: #eaeaea;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  outline: none;
+  background: #111111;
+  color: #f5f5f5;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-field input {
+  min-height: 50px;
+}
+
+.form-field textarea {
+  min-height: 145px;
+  resize: vertical;
+}
+
+.form-field select {
+  min-height: 50px;
+  cursor: pointer;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: #777777;
+  opacity: 1;
+}
+
+.form-field input:hover,
+.form-field textarea:hover,
+.form-field select:hover {
+  border-color: rgba(255, 59, 59, 0.4);
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  border-color: #ff3b3b;
+  background: #141111;
+  box-shadow: 0 0 0 3px rgba(255, 59, 59, 0.12);
+}
+
+.form-field input:focus-visible,
+.form-field textarea:focus-visible,
+.form-field select:focus-visible {
+  outline: 1px solid #ff3b3b;
+  outline-offset: 2px;
+}
+
+.form-field select option {
+  background: #111111;
+  color: #f5f5f5;
+}
+
+.form-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 54px;
+  padding: 15px 22px;
+  border: 1px solid #ff3b3b;
+  border-radius: 10px;
+  background: #ff3b3b;
+  color: #ffffff;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-submit:hover {
+  background: #e92d2d;
+  border-color: #e92d2d;
+  box-shadow: 0 8px 25px rgba(255, 59, 59, 0.18);
+  transform: translateY(-2px);
+}
+
+.form-submit:active {
+  transform: translateY(0);
+}
+
+.form-submit:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
+}
+
+.form-privacy {
+  margin: -8px 0 0;
+  color: #929292;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.contact-alternatives {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.contact-alternatives a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.025);
+  color: #eeeeee;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.contact-alternatives a:hover {
+  border-color: rgba(255, 59, 59, 0.65);
+  background: rgba(255, 59, 59, 0.07);
+  color: #ff5555;
+}
+
+/* Ascunde câmpul anti-spam, dacă există în formular */
+.form-honeypot,
+.quote-form [name="_gotcha"] {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Aspect corect pentru validarea browserului */
+.form-field input:invalid:not(:placeholder-shown),
+.form-field textarea:invalid:not(:placeholder-shown) {
+  border-color: rgba(255, 59, 59, 0.75);
+}
+
+.form-field input:disabled,
+.form-field textarea:disabled,
+.form-field select:disabled,
+.form-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Previne depășirea formularului din container */
+.quote-form,
+.form-field,
+.form-field input,
+.form-field textarea,
+.form-field select {
+  max-width: 100%;
+}
+
+/* Responsive — telefoane și ecrane mici */
+@media (max-width: 600px) {
+  .quote-form {
+    gap: 18px;
+    padding: 20px 16px;
+    border-radius: 14px;
+  }
+
+  .form-field {
+    gap: 8px;
+  }
+
+  .form-field input,
+  .form-field textarea,
+  .form-field select {
+    padding: 13px;
+    font-size: 16px;
+  }
+
+  .form-submit {
+    min-height: 52px;
+  }
+
+  .contact-alternatives {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contact-alternatives a {
+    width: 100%;
+  }
+}
+
+/* Respectă setarea de reducere a animațiilor */
+@media (prefers-reduced-motion: reduce) {
+  .quote-form *,
+  .contact-alternatives a {
+    scroll-behavior: auto;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .form-submit:hover {
+    transform: none;
+  }
+}
