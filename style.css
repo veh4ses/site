@@ -2641,3 +2641,43 @@ button:focus-visible {
     transform: none;
   }
 }
+
+/* =========================================
+   CASE STUDY DETAILS — VEH4SES
+   ========================================= */
+
+.case-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.case-details > div {
+  min-width: 0;
+}
+
+.case-details > div > span {
+  display: block;
+  margin-bottom: 9px;
+  color: #858585;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.case-details > div > p {
+  margin: 0;
+  color: #d1d1d1;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 600px) {
+  .case-details {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
