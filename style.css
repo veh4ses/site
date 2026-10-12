@@ -2509,3 +2509,99 @@ html {
     cursor: auto;
   }
 }
+
+/* =========================================
+   VEH4SES® — MICRO-INTERACTIONS
+========================================= */
+
+/* Tranziții naturale pentru butoane */
+.button,
+.nav-cta,
+.form-submit {
+  position: relative;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+/* Butonul principal */
+.button-primary:hover,
+.nav-cta:hover,
+.form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 22px rgba(255, 59, 59, 0.14);
+}
+
+/* Săgețile se mișcă discret */
+.button span,
+.nav-cta span {
+  display: inline-block;
+  transition: transform 180ms ease;
+}
+
+.button-primary:hover span,
+.nav-cta:hover span {
+  transform: translate(3px, -2px);
+}
+
+.button-secondary:hover span {
+  transform: translateY(3px);
+}
+
+/* Feedback la apăsare */
+.button:active,
+.nav-cta:active,
+.form-submit:active {
+  transform: translateY(0) scale(0.985);
+  box-shadow: none;
+}
+
+/* Linkuri text */
+a:not(.button):not(.nav-cta) {
+  transition:
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+/* Navigare clară cu tastatura */
+.button:focus-visible,
+.nav-cta:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #ff3b3b;
+  outline-offset: 4px;
+}
+
+/* Nu anima pe dispozitive tactile */
+@media (hover: none), (pointer: coarse) {
+  .button:hover,
+  .nav-cta:hover,
+  .form-submit:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* Respectă preferințele de accesibilitate */
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .nav-cta,
+  .form-submit,
+  .button span,
+  .nav-cta span,
+  a:not(.button):not(.nav-cta) {
+    transition: none !important;
+  }
+
+  .button:hover,
+  .nav-cta:hover,
+  .form-submit:hover,
+  .button:active,
+  .nav-cta:active,
+  .form-submit:active {
+    transform: none;
+  }
+}
