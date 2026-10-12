@@ -2471,3 +2471,41 @@ html {
     transform: none;
   }
 }
+
+/* VEH4SES® — Minimal Crosshair Cursor */
+
+/* Cursor personalizat doar pe dispozitive cu mouse */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: crosshair;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  label,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  input,
+  textarea {
+    cursor: text;
+  }
+
+  button:disabled,
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Nu schimba experiența pe ecranele tactile */
+@media (hover: none), (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+}
