@@ -1,4 +1,4 @@
-
+```javascript
 /* =========================================
    VEH4SES — Interactive Website
    ========================================= */
@@ -8,9 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const navbar = document.querySelector(".navbar");
   const menuToggle = document.querySelector(".menu-toggle");
   const navMenu = document.querySelector(".nav-menu");
+
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
+
+  const canUsePointerEffect =
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+    !reducedMotion;
 
   body.classList.add("js-ready");
 
@@ -66,10 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   updateNavbar();
-  window.addEventListener("scroll", updateNavbar, { passive: true });
+
+  window.addEventListener("scroll", updateNavbar, {
+    passive: true,
+  });
 
   /* -----------------------------------------
-     3. Smooth scrolling for internal links
+     3. Smooth scrolling
      ----------------------------------------- */
 
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
@@ -78,7 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!targetId || targetId === "#") return;
 
-      const target = document.querySelector(targetId);
+      let target;
+
+      try {
+        target = document.querySelector(targetId);
+      } catch {
+        return;
+      }
 
       if (!target) return;
 
@@ -137,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     revealElements.forEach((element, index) => {
       element.classList.add("reveal");
+
       element.style.setProperty(
         "--reveal-delay",
         `${(index % 4) * 80}ms`
@@ -151,36 +166,55 @@ document.addEventListener("DOMContentLoaded", () => {
      ----------------------------------------- */
 
   const navLinks = [
-    ...document.querySelectorAll(
-      '.nav-menu a[href^="#"]'
-    ),
+    ...document.querySelectorAll('.nav-menu a[href^="#"]'),
   ];
 
-  const sections = navLinks
-    .map((link) => {
-      const id = link.getAttribute("href");
-      return id ? document.querySelector(id) : null;
-    })
-    .filter(Boolean);
+  const sectionMap = new Map();
+
+  navLinks.forEach((link) => {
+    const id = link.getAttribute("href");
+
+    if (!id || id === "#") return;
+
+    let section;
+
+    try {
+      section = document.querySelector(id);
+    } catch {
+      return;
+    }
+
+    if (section) sectionMap.set(section, id);
+  });
+
+  const sections = [...sectionMap.keys()];
 
   if ("IntersectionObserver" in window && sections.length) {
     const sectionObserver = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
+        const visibleSections = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top - b.boundingClientRect.top
+          );
 
-          navLinks.forEach((link) => {
-            const isActive =
-              link.getAttribute("href") === `#${entry.target.id}`;
+        if (!visibleSections.length) return;
 
-            link.classList.toggle("active", isActive);
+        const activeSection = visibleSections[0].target;
+        const activeHref = sectionMap.get(activeSection);
 
-            if (isActive) {
-              link.setAttribute("aria-current", "location");
-            } else {
-              link.removeAttribute("aria-current");
-            }
-          });
+        navLinks.forEach((link) => {
+          const isActive =
+            link.getAttribute("href") === activeHref;
+
+          link.classList.toggle("active", isActive);
+
+          if (isActive) {
+            link.setAttribute("aria-current", "location");
+          } else {
+            link.removeAttribute("aria-current");
+          }
         });
       },
       {
@@ -189,22 +223,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     );
 
-    sections.forEach((section) => sectionObserver.observe(section));
+    sections.forEach((section) => {
+      sectionObserver.observe(section);
+    });
   }
 
   /* -----------------------------------------
-     6. Hero 3D movement
+     6. Hero pointer effect
      ----------------------------------------- */
 
   const heroVisual = document.querySelector(".hero-visual");
 
-  const canUsePointerEffect =
-    window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-    !reducedMotion;
-
   if (heroVisual && canUsePointerEffect) {
     heroVisual.addEventListener("pointermove", (event) => {
       const rect = heroVisual.getBoundingClientRect();
+
+      if (!rect.width || !rect.height) return;
 
       const x = (event.clientX - rect.left) / rect.width;
       const y = (event.clientY - rect.top) / rect.height;
@@ -227,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* -----------------------------------------
-     7. Interactive work previews
+     7. Interactive work cards
      ----------------------------------------- */
 
   document.querySelectorAll(".work-card").forEach((card) => {
@@ -235,6 +269,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     card.addEventListener("pointermove", (event) => {
       const rect = card.getBoundingClientRect();
+
+      if (!rect.width || !rect.height) return;
 
       const x = (event.clientX - rect.left) / rect.width;
       const y = (event.clientY - rect.top) / rect.height;
@@ -251,11 +287,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* -----------------------------------------
      8. FAQ accordion
+     Supports native <details> and custom items
      ----------------------------------------- */
 
   document.querySelectorAll(".faq-item").forEach((item) => {
+    const details = item.matches("details")
+      ? item
+      : item.querySelector("details");
+
+    if (details) {
+      details.addEventListener("toggle", () => {
+        item.classList.toggle("open", details.open);
+
+        if (!details.open) return;
+
+        document.querySelectorAll(".faq-item").forEach((otherItem) => {
+          if (otherItem === item) return;
+
+          const otherDetails = otherItem.matches("details")
+            ? otherItem
+            : otherItem.querySelector("details");
+
+          if (otherDetails && otherDetails.open) {
+            otherDetails.open = false;
+          }
+
+          otherItem.classList.remove("open");
+        });
+      });
+
+      item.classList.toggle("open", details.open);
+      return;
+    }
+
     const question = item.querySelector(
-      "button, summary, .faq-question"
+      'button, .faq-question'
     );
 
     if (!question) return;
@@ -263,25 +329,22 @@ document.addEventListener("DOMContentLoaded", () => {
     question.addEventListener("click", () => {
       const isOpen = item.classList.contains("open");
 
-      document.querySelectorAll(".faq-item.open").forEach((openItem) => {
-        if (openItem === item) return;
+      document.querySelectorAll(".faq-item.open").forEach((otherItem) => {
+        if (otherItem === item) return;
 
-        openItem.classList.remove("open");
+        otherItem.classList.remove("open");
 
-        const openQuestion = openItem.querySelector(
-          "button, .faq-question"
+        const otherQuestion = otherItem.querySelector(
+          'button, .faq-question'
         );
 
-        if (openQuestion) {
-          openQuestion.setAttribute("aria-expanded", "false");
+        if (otherQuestion) {
+          otherQuestion.setAttribute("aria-expanded", "false");
         }
       });
 
       item.classList.toggle("open", !isOpen);
-
-      if (question.tagName === "BUTTON") {
-        question.setAttribute("aria-expanded", String(!isOpen));
-      }
+      question.setAttribute("aria-expanded", String(!isOpen));
     });
   });
 
@@ -290,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
      ----------------------------------------- */
 
   document.querySelectorAll("[data-year]").forEach((element) => {
-    element.textContent = new Date().getFullYear();
+    element.textContent = String(new Date().getFullYear());
   });
 
   /* -----------------------------------------
@@ -307,5 +370,5 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   });
-
 });
+```
