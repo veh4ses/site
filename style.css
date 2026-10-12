@@ -2292,9 +2292,18 @@ html {
   border-color: rgba(255, 59, 59, 0.3);
 }
 
+
 .hero-signature .visual-core {
   gap: 18px;
+  transform:
+    perspective(1000px)
+    rotateX(var(--rotate-x, 0deg))
+    rotateY(var(--rotate-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 300ms ease;
+  will-change: transform;
 }
+
 
 .hero-signature .core-symbol {
   font-size: clamp(7rem, 15vw, 12rem);
