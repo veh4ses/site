@@ -1,47 +1,32 @@
-```javascript
-/* =========================================
-   VEH4SES — Interactive Website
-   ========================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
   const navbar = document.querySelector(".navbar");
   const menuToggle = document.querySelector(".menu-toggle");
   const navMenu = document.querySelector(".nav-menu");
+  const navLinks = document.querySelectorAll(".nav-menu a");
+  const backToTop = document.querySelector(".back-to-top");
 
-  const reducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-
-  const canUsePointerEffect =
-    window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-    !reducedMotion;
-
-  body.classList.add("js-ready");
-
-  /* -----------------------------------------
-     1. Mobile navigation
-     ----------------------------------------- */
-
-  function closeMenu() {
-    if (!menuToggle || !navMenu) return;
-
-    menuToggle.classList.remove("active");
-    navMenu.classList.remove("open");
-    menuToggle.setAttribute("aria-expanded", "false");
-  }
-
+  // Mobile navigation
   if (menuToggle && navMenu) {
     menuToggle.setAttribute("aria-expanded", "false");
+
+    const closeMenu = () => {
+      navMenu.classList.remove("open");
+      menuToggle.classList.remove("active");
+      menuToggle.setAttribute("aria-expanded", "false");
+      body.classList.remove("menu-open");
+    };
 
     menuToggle.addEventListener("click", () => {
       const isOpen = navMenu.classList.toggle("open");
 
       menuToggle.classList.toggle("active", isOpen);
       menuToggle.setAttribute("aria-expanded", String(isOpen));
+      body.classList.toggle("menu-open", isOpen);
     });
 
-    navMenu.querySelectorAll("a").forEach((link) => {
+    navLinks.forEach((link) => {
       link.addEventListener("click", closeMenu);
     });
 
@@ -60,315 +45,210 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* -----------------------------------------
-     2. Navbar scroll effect
-     ----------------------------------------- */
+  // Navbar scroll state and back-to-top visibility
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
 
-  function updateNavbar() {
-    if (!navbar) return;
+    if (navbar) {
+      navbar.classList.toggle("scrolled", scrollY > 30);
+    }
 
-    navbar.classList.toggle("scrolled", window.scrollY > 30);
-  }
+    if (backToTop) {
+      backToTop.classList.toggle("visible", scrollY > 400);
+    }
+  };
 
-  updateNavbar();
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  handleScroll();
 
-  window.addEventListener("scroll", updateNavbar, {
-    passive: true,
-  });
-
-  /* -----------------------------------------
-     3. Smooth scrolling
-     ----------------------------------------- */
-
+  // Smooth scrolling for internal links
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener("click", (event) => {
       const targetId = link.getAttribute("href");
 
       if (!targetId || targetId === "#") return;
 
-      let target;
-
-      try {
-        target = document.querySelector(targetId);
-      } catch {
-        return;
-      }
-
+      const target = document.querySelector(targetId);
       if (!target) return;
 
       event.preventDefault();
-      closeMenu();
 
-      target.scrollIntoView({
-        behavior: reducedMotion ? "auto" : "smooth",
-        block: "start",
+      const navbarHeight = navbar
+        ? navbar.getBoundingClientRect().height
+        : 0;
+
+      const targetPosition =
+        target.getBoundingClientRect().top +
+        window.scrollY -
+        navbarHeight -
+        16;
+
+      window.scrollTo({
+        top: Math.max(0, targetPosition),
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
       });
     });
   });
 
-  /* -----------------------------------------
-     4. Scroll reveal animations
-     ----------------------------------------- */
-
+  // Reveal elements when they enter the viewport
   const revealSelectors = [
+    ".intro",
     ".intro-content",
     ".section-heading",
     ".service-card",
-    ".work-card",
-    ".approach-content",
-    ".approach-point",
-    ".process-card",
+    ".tech-card",
+    ".process-step",
     ".about-visual",
     ".about-content",
     ".faq-item",
-    ".contact-content",
-    ".footer-main",
+    ".contact-inner",
+    ".contact-note",
   ];
 
   const revealElements = document.querySelectorAll(
     revealSelectors.join(", ")
   );
 
-  if (reducedMotion || !("IntersectionObserver" in window)) {
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  if (reduceMotion || !("IntersectionObserver" in window)) {
     revealElements.forEach((element) => {
-      element.classList.add("reveal", "visible");
+      element.classList.add("is-visible", "tech-visible");
     });
   } else {
+    revealElements.forEach((element, index) => {
+      element.classList.add("reveal");
+      element.style.setProperty(
+        "--reveal-delay",
+        `${Math.min(index % 4, 3) * 80}ms`
+      );
+    });
+
     const revealObserver = new IntersectionObserver(
       (entries, observer) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-
-          entry.target.classList.add("visible");
-          observer.unobserve(entry.target);
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible", "tech-visible");
+            observer.unobserve(entry.target);
+          }
         });
       },
       {
         threshold: 0.12,
-        rootMargin: "0px 0px -35px 0px",
+        rootMargin: "0px 0px -40px 0px",
       }
     );
 
-    revealElements.forEach((element, index) => {
-      element.classList.add("reveal");
-
-      element.style.setProperty(
-        "--reveal-delay",
-        `${(index % 4) * 80}ms`
-      );
-
+    revealElements.forEach((element) => {
       revealObserver.observe(element);
     });
   }
 
-  /* -----------------------------------------
-     5. Active navigation link
-     ----------------------------------------- */
+  // Active navigation link based on the visible section
+  const sections = document.querySelectorAll(
+    "#home, #services, #technologies, #about, #contact"
+  );
 
-  const navLinks = [
-    ...document.querySelectorAll('.nav-menu a[href^="#"]'),
-  ];
-
-  const sectionMap = new Map();
-
-  navLinks.forEach((link) => {
-    const id = link.getAttribute("href");
-
-    if (!id || id === "#") return;
-
-    let section;
-
-    try {
-      section = document.querySelector(id);
-    } catch {
-      return;
-    }
-
-    if (section) sectionMap.set(section, id);
-  });
-
-  const sections = [...sectionMap.keys()];
-
-  if ("IntersectionObserver" in window && sections.length) {
+  if ("IntersectionObserver" in window && sections.length > 0) {
     const sectionObserver = new IntersectionObserver(
       (entries) => {
-        const visibleSections = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort(
-            (a, b) =>
-              a.boundingClientRect.top - b.boundingClientRect.top
-          );
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
 
-        if (!visibleSections.length) return;
+          const sectionId = entry.target.id;
 
-        const activeSection = visibleSections[0].target;
-        const activeHref = sectionMap.get(activeSection);
+          navLinks.forEach((link) => {
+            const isActive =
+              link.getAttribute("href") === `#${sectionId}`;
 
-        navLinks.forEach((link) => {
-          const isActive =
-            link.getAttribute("href") === activeHref;
+            link.classList.toggle("active", isActive);
 
-          link.classList.toggle("active", isActive);
-
-          if (isActive) {
-            link.setAttribute("aria-current", "location");
-          } else {
-            link.removeAttribute("aria-current");
-          }
+            if (isActive) {
+              link.setAttribute("aria-current", "location");
+            } else {
+              link.removeAttribute("aria-current");
+            }
+          });
         });
       },
       {
-        rootMargin: "-30% 0px -55% 0px",
+        rootMargin: "-35% 0px -55% 0px",
         threshold: 0,
       }
     );
 
-    sections.forEach((section) => {
-      sectionObserver.observe(section);
-    });
+    sections.forEach((section) => sectionObserver.observe(section));
   }
 
-  /* -----------------------------------------
-     6. Hero pointer effect
-     ----------------------------------------- */
-
+  // Subtle hero visual movement on desktop
   const heroVisual = document.querySelector(".hero-visual");
+  const finePointer = window.matchMedia("(pointer: fine)").matches;
 
-  if (heroVisual && canUsePointerEffect) {
+  if (heroVisual && finePointer && !reduceMotion) {
     heroVisual.addEventListener("pointermove", (event) => {
       const rect = heroVisual.getBoundingClientRect();
 
-      if (!rect.width || !rect.height) return;
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
 
-      const x = (event.clientX - rect.left) / rect.width;
-      const y = (event.clientY - rect.top) / rect.height;
-
-      const rotateY = (x - 0.5) * 8;
-      const rotateX = (0.5 - y) * 8;
-
-      heroVisual.style.setProperty("--pointer-x", `${x * 100}%`);
-      heroVisual.style.setProperty("--pointer-y", `${y * 100}%`);
-      heroVisual.style.setProperty("--rotate-x", `${rotateX}deg`);
-      heroVisual.style.setProperty("--rotate-y", `${rotateY}deg`);
+      heroVisual.style.setProperty("--pointer-x", `${x * 10}px`);
+      heroVisual.style.setProperty("--pointer-y", `${y * 10}px`);
     });
 
     heroVisual.addEventListener("pointerleave", () => {
-      heroVisual.style.setProperty("--pointer-x", "50%");
-      heroVisual.style.setProperty("--pointer-y", "50%");
-      heroVisual.style.setProperty("--rotate-x", "0deg");
-      heroVisual.style.setProperty("--rotate-y", "0deg");
+      heroVisual.style.setProperty("--pointer-x", "0px");
+      heroVisual.style.setProperty("--pointer-y", "0px");
     });
   }
 
-  /* -----------------------------------------
-     7. Interactive work cards
-     ----------------------------------------- */
+  // Technology cards: small staggered entrance
+  const techCards = document.querySelectorAll(".tech-card");
 
-  document.querySelectorAll(".work-card").forEach((card) => {
-    if (!canUsePointerEffect) return;
-
-    card.addEventListener("pointermove", (event) => {
-      const rect = card.getBoundingClientRect();
-
-      if (!rect.width || !rect.height) return;
-
-      const x = (event.clientX - rect.left) / rect.width;
-      const y = (event.clientY - rect.top) / rect.height;
-
-      card.style.setProperty("--mouse-x", `${x * 100}%`);
-      card.style.setProperty("--mouse-y", `${y * 100}%`);
-    });
-
-    card.addEventListener("pointerleave", () => {
-      card.style.setProperty("--mouse-x", "50%");
-      card.style.setProperty("--mouse-y", "50%");
-    });
+  techCards.forEach((card, index) => {
+    card.style.setProperty("--tech-delay", `${index * 100}ms`);
   });
 
-  /* -----------------------------------------
-     8. FAQ accordion
-     Supports native <details> and custom items
-     ----------------------------------------- */
+  // FAQ accordion: keep only one answer open at a time
+  const faqItems = document.querySelectorAll(".faq-item");
 
-  document.querySelectorAll(".faq-item").forEach((item) => {
-    const details = item.matches("details")
-      ? item
-      : item.querySelector("details");
+  faqItems.forEach((item) => {
+    if (item.tagName.toLowerCase() === "details") {
+      item.addEventListener("toggle", () => {
+        if (!item.open) return;
 
-    if (details) {
-      details.addEventListener("toggle", () => {
-        item.classList.toggle("open", details.open);
-
-        if (!details.open) return;
-
-        document.querySelectorAll(".faq-item").forEach((otherItem) => {
-          if (otherItem === item) return;
-
-          const otherDetails = otherItem.matches("details")
-            ? otherItem
-            : otherItem.querySelector("details");
-
-          if (otherDetails && otherDetails.open) {
-            otherDetails.open = false;
+        faqItems.forEach((otherItem) => {
+          if (
+            otherItem !== item &&
+            otherItem.tagName.toLowerCase() === "details"
+          ) {
+            otherItem.open = false;
           }
-
-          otherItem.classList.remove("open");
         });
       });
-
-      item.classList.toggle("open", details.open);
-      return;
     }
-
-    const question = item.querySelector(
-      'button, .faq-question'
-    );
-
-    if (!question) return;
-
-    question.addEventListener("click", () => {
-      const isOpen = item.classList.contains("open");
-
-      document.querySelectorAll(".faq-item.open").forEach((otherItem) => {
-        if (otherItem === item) return;
-
-        otherItem.classList.remove("open");
-
-        const otherQuestion = otherItem.querySelector(
-          'button, .faq-question'
-        );
-
-        if (otherQuestion) {
-          otherQuestion.setAttribute("aria-expanded", "false");
-        }
-      });
-
-      item.classList.toggle("open", !isOpen);
-      question.setAttribute("aria-expanded", String(!isOpen));
-    });
   });
 
-  /* -----------------------------------------
-     9. Automatic footer year
-     ----------------------------------------- */
-
+  // Automatically update the footer year
   document.querySelectorAll("[data-year]").forEach((element) => {
-    element.textContent = String(new Date().getFullYear());
+    element.textContent = new Date().getFullYear();
   });
 
-  /* -----------------------------------------
-     10. Back to top
-     ----------------------------------------- */
-
-  document.querySelectorAll(".back-to-top").forEach((button) => {
-    button.addEventListener("click", (event) => {
+  // Back-to-top button
+  if (backToTop) {
+    backToTop.addEventListener("click", (event) => {
       event.preventDefault();
 
       window.scrollTo({
         top: 0,
-        behavior: reducedMotion ? "auto" : "smooth",
+        behavior: reduceMotion ? "auto" : "smooth",
       });
     });
-  });
+  }
+
+  // Update the current year even if the page loads at a different scroll position
+  handleScroll();
 });
-```
