@@ -2085,3 +2085,315 @@ h6,
     transform: none;
   }
 }
+
+/* VEH4SES® — Editorial Visual Identity */
+
+:root {
+  --vh-line: rgba(255, 255, 255, 0.12);
+  --vh-muted: #929292;
+  --vh-red: #ff3b3b;
+}
+
+/* Separatoare subtile între secțiuni */
+section {
+  position: relative;
+  isolation: isolate;
+}
+
+section + section {
+  border-top: 1px solid var(--vh-line);
+}
+
+/* Titluri cu ierarhie mai clară */
+section h2 {
+  max-width: 850px;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+/* Paragrafe mai ușor de citit */
+section p {
+  text-wrap: pretty;
+}
+
+/* Accente roșii discrete pe selecție */
+::selection {
+  color: #ffffff;
+  background: rgba(255, 59, 59, 0.75);
+}
+
+/* Linkuri: feedback vizual simplu */
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--vh-red);
+  outline-offset: 5px;
+}
+
+/* Scrollbar discret pe browserele compatibile */
+html {
+  scrollbar-color: #454545 #0b0b0b;
+  scrollbar-width: thin;
+}
+
+/* Nu forța animații pentru utilizatorii care le dezactivează */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================
+   VEH4SES® — SIGNATURE HERO
+========================================= */
+
+.hero-signature {
+  --hero-red: #ff3b3b;
+  --hero-line: rgba(255, 255, 255, 0.13);
+
+  position: relative;
+  overflow: clip;
+}
+
+/* Titlu editorial, cu ierarhie tipografică */
+.hero-signature .hero-signature-title {
+  max-width: 790px;
+  margin-block: 28px 24px;
+  font-family: var(--font-heading);
+  font-size: clamp(2.8rem, 5.8vw, 5.8rem);
+  font-weight: 800;
+  line-height: 0.99;
+  letter-spacing: -0.065em;
+  text-wrap: balance;
+}
+
+.hero-signature .hero-title-line {
+  display: block;
+}
+
+.hero-signature .hero-title-last {
+  display: block;
+  max-width: 680px;
+  margin-top: 9px;
+  color: #b9b9b9;
+  font-size: 0.72em;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+}
+
+.hero-signature .text-accent {
+  color: var(--hero-red);
+}
+
+.hero-signature .hero-slash {
+  padding-inline: 3px;
+  color: var(--hero-red);
+}
+
+.hero-signature .eyebrow {
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* Descriere și notă */
+.hero-signature .hero-description {
+  max-width: 560px;
+  color: #a8a8a8;
+  font-size: clamp(0.98rem, 1.2vw, 1.08rem);
+  line-height: 1.85;
+}
+
+.hero-signature .hero-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #858585;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.hero-signature .hero-note-line {
+  flex: 0 0 34px;
+  height: 1px;
+  background: var(--hero-red);
+}
+
+/* Zona vizuală */
+.hero-signature .hero-signature-visual {
+  isolation: isolate;
+  border: 1px solid var(--hero-line);
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(255, 59, 59, 0.075),
+      transparent 42%
+    ),
+    #0d0d0d;
+}
+
+.hero-signature .visual-grid {
+  opacity: 0.45;
+  background-image:
+    linear-gradient(var(--hero-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hero-line) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 18%,
+    #000 82%,
+    transparent
+  );
+}
+
+.hero-signature .visual-orbit {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.hero-signature .orbit-two {
+  border-style: dashed;
+  border-color: rgba(255, 59, 59, 0.3);
+}
+
+.hero-signature .visual-core {
+  gap: 18px;
+}
+
+.hero-signature .core-symbol {
+  font-size: clamp(7rem, 15vw, 12rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.12em;
+  text-shadow: 0 0 55px rgba(255, 59, 59, 0.12);
+}
+
+.hero-signature .core-symbol > span {
+  color: var(--hero-red);
+}
+
+.hero-signature .core-top,
+.hero-signature .core-bottom {
+  color: #a3a3a3;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+}
+
+.hero-signature .floating-label {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 12, 12, 0.92);
+  color: #e1e1e1;
+  font-size: 0.64rem;
+  letter-spacing: 0.09em;
+  backdrop-filter: blur(12px);
+}
+
+.hero-signature .label-indicator {
+  background: var(--hero-red);
+  box-shadow: 0 0 10px rgba(255, 59, 59, 0.35);
+}
+
+.hero-signature .visual-index {
+  color: #777;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+
+.hero-signature .visual-corner {
+  position: absolute;
+  z-index: 2;
+  color: #777;
+  font-family: var(--font);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+}
+
+.hero-signature .visual-corner-tl {
+  top: 20px;
+  left: 20px;
+}
+
+.hero-signature .visual-corner-br {
+  right: 20px;
+  bottom: 20px;
+}
+
+/* Linia de identitate de la baza hero-ului */
+.hero-signature .hero-bottom {
+  border-top: 1px solid var(--hero-line);
+  color: #858585;
+  letter-spacing: 0.12em;
+}
+
+/* Focus vizibil și utilizare cu tastatura */
+.hero-signature a:focus-visible {
+  outline: 2px solid var(--hero-red);
+  outline-offset: 5px;
+}
+
+/* Adaptare pentru telefoane */
+@media (max-width: 700px) {
+  .hero-signature .hero-signature-title {
+    margin-top: 22px;
+    font-size: clamp(2.65rem, 11vw, 4.4rem);
+    line-height: 1.02;
+  }
+
+  .hero-signature .hero-title-last {
+    margin-top: 12px;
+    font-size: 0.68em;
+    line-height: 1.15;
+  }
+
+  .hero-signature .hero-description {
+    line-height: 1.75;
+  }
+
+  .hero-signature .hero-signature-visual {
+    min-height: 340px;
+  }
+
+  .hero-signature .core-symbol {
+    font-size: clamp(7rem, 30vw, 10rem);
+  }
+
+  .hero-signature .core-top,
+  .hero-signature .core-bottom {
+    font-size: 0.53rem;
+    letter-spacing: 0.12em;
+  }
+
+  .hero-signature .visual-corner-tl {
+    top: 14px;
+    left: 14px;
+  }
+
+  .hero-signature .visual-corner-br {
+    right: 14px;
+    bottom: 14px;
+  }
+
+  .hero-signature .hero-bottom {
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.58rem;
+    line-height: 1.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-signature .visual-orbit {
+    animation: none !important;
+  }
+}
